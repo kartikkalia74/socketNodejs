@@ -6,14 +6,25 @@
 <body>
     <h1>Users</h1>
     <ul id="userList"></ul>
-    <form action="">
+    <form action="users/userList">
         <button>user List</button>
     </form>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
     $(function(){
-        
-    })
+        let socket= io()
+        $('form').submit(function(e){
+            e.preventDefault();
+            socket.emit('userList','userlist')
+        })
+                
+                socket.on('users',function(users){
+                    users.forEach(element => {
+                        $('#userList').append($('<li>'+element.name+'</li>'))
+                    });
+           })
+           })
     </script>
-    
 </body>
 </html>

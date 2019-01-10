@@ -3,7 +3,8 @@ const app = express();
 const io = require('socket.io')(app);
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/index.html');
+  
+    res.render(__dirname + '/index.html');
 
   });
 
@@ -16,7 +17,9 @@ io.on('connection', function(socket){
   socket.on('message',function(msg){
     io.emit('message',msg)
   })
-  
+  socket.on('userList',function(list){
+    io.emit('users',)
+  })
   socket.on('disconnect',function(){
       --counter;
       console.log('user disconnected' ,counter)

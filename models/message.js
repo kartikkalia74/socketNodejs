@@ -4,9 +4,11 @@ const Schema = mongoose.Schema;
 const messageSchema = new Schema({
 sender:{type:mongoose.Schema.Types.ObjectId,ref:'user'},
 message:{type:String,required:true},
-user:{type:mongoose.Schema.Types.ObjectId, ref:'user'}
+reciever:{type:mongoose.Schema.Types.ObjectId, ref:'user'},
+time:{type:Date,default:Date.now().toString()}
 })
 
 const message = mongoose.model('message',messageSchema);
 
-module.exports = {message}
+module.exports = {message};
+
