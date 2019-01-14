@@ -1,5 +1,6 @@
 import React ,{Component} from 'react';
-import  {users} from './connection';
+import  {users,recieverName} from './connection';
+
 export default class Users extends Component{
     constructor(props){
         super(props);
@@ -12,8 +13,10 @@ export default class Users extends Component{
             this.setState({userList:list})
         })
     }
-    handleUser =(recieverId)=>{
-        
+    handleUser =(reciever)=>{
+        console.log(reciever,'klk')
+        recieverName(reciever)
+
     }
 
     render(){  

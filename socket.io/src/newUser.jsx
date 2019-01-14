@@ -13,7 +13,7 @@ export default class NewUser extends Component{
         console.log(name)
         this.setState({name})
        
-    }
+    }//sending name og user
     handleClick  =()=>{
         sender(this.state.name)
     }

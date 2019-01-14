@@ -2,10 +2,10 @@ import io from 'socket.io-client';
 const socket = io.connect('http://localhost:4001')
 
 
-export const sendMessage = (reciever,sender,message,cb)=>{
-    console.log(sender,reciever ,message)
-    socket.emit('chat',{sender,reciever,message})
-    socket.on('chatt',function(data){
+export const sendMessage = (sender,reciever,message,chatId,cb)=>{
+    console.log(sender,reciever ,message,'coneection')
+    socket.emit(`${chatId}-chat`,{sender,reciever,message})
+    socket.on('chat',function(data){
         console.log(data,'popo')
         cb(data)
     })
@@ -21,7 +21,6 @@ export const sendMessage = (reciever,sender,message,cb)=>{
     }
 
 export const users =(user,cb)=>{
-
     socket.emit('userList',user)
     socket.on('users',function(dataList){
         console.log(dataList)
@@ -33,10 +32,18 @@ export const sender =(senderId)=>{
     socket.emit('sender',senderId)
 }
 
-export const senderName = (cb)=>{
-    socket.emit('askName','dsf')
-    socket.on('send',function(senderName){
-        console.log(senderName,'klkl')
-        cb(senderName)
+export const initials = (cb)=>{
+    socket.emit('initials','dsf')
+    socket.on('chatName',function(memberNames){
+        console.log(memberNames,'klkl')
+        cb(memberNames)
     })
+}
+export const initalChat = ()=>{
+    socket.emit('initialChat','getMessages')
+    socket.on('')
+}
+export const recieverName =(recieverName)=>{
+    socket.emit('sendReciever',recieverName)
+
 }
