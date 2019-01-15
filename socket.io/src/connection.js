@@ -3,9 +3,9 @@ const socket = io.connect('http://localhost:4001')
 
 
 export const sendMessage = (sender,reciever,message,chatId,cb)=>{
-    console.log(sender,reciever ,message,'coneection')
-    socket.emit(`${chatId}-chat`,{sender,reciever,message})
-    socket.on('chat',function(data){
+    console.log(sender,reciever ,message,`'${chatId}-chat'`,'coneection')
+    socket.emit(`'111-chat'`,{sender,reciever,message,chatId})
+    socket.on(`'${chatId}-new'`,function(data){
         console.log(data,'popo')
         cb(data)
     })
@@ -18,6 +18,11 @@ export const sendMessage = (sender,reciever,message,chatId,cb)=>{
     })
     export const chat =(senderId,message,recieverId)=>{
         socket.emit('chatmessage',{senderId,message,recieverId})
+    }
+    export const recieveChatId =(cb)=>{
+        socket.on('recieverRecieved',function(chatId){
+            cb(chatId)
+        })
     }
 
 export const users =(user,cb)=>{

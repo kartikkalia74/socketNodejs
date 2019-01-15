@@ -40,23 +40,31 @@ io.on('connection', function(socket){
             })   
           })
     })
-    socket.on(`${obj.chatId}-chat`,(msg)=>{
-      chat.findOne({members:{$all:[obj.senderId,obj.recieverId]}},function(err,memberChat){
+    socket.on(`'111-chat'`,(chatGroup)=>{
+      console.log('incomming request',chatGroup)
+      chat.findOne({_id:chatGroup.chatId},function(err,memberChat){
         if(err) throw err;
         //is chat before
-        console.log(msg,'msg')
+        console.log(chatGroup)
+        console.log(memberChat,'memberchat')
         if(memberChat){
-          helpher.saveMessage(obj.senderId,obj.recieverId,msg.message,function(err){
-            if(err){
 
+           helpher.saveMessage(obj.senderId,obj.recieverId,chatGroup.message,chatGroup.chatId,function(err,messageId){
+            if(!err){
+              console.log(messageId,'newMessage')
+              message.findById(messageId,{message:1,sender:1,time:1}).populate('sender')
+              .then((res)=>{console.log(res,'ressssssssss') ; socket.emit(`'${chatGroup.chatId}-new'`,{res})})
+                
+              
+                
             }
-          })
+          }) 
           //is send any message
           
         }
         console.log(memberChat,'memberchat')
       })
-      socket.emit()
+     
     })
  /*  socket.on('message',function(msg,clientId){
       obj ={msg,name:'kar'}
@@ -86,20 +94,18 @@ io.on('connection', function(socket){
   
   socket.on('initials',function(msg){
     console.log('chatNames')
-       /*  helpher.members(obj.sender,obj.reciever,function(senderId,recieverId){
-          helpher.newChat(senderId,recieverId,function(messageList){
-            console.log(messageList,'messageList')
-           
+        helpher.members(obj.sender,obj.reciever,function(senderId,recieverId){
+          helpher.chatId(senderId,recieverId,(chatId)=>{
+            obj.chatId=chatId;
+            helpher.getInitialChat(chatId,(initialChat)=>{
+              socket.emit('chatName',{sender:obj.sender,reciever:obj.reciever,chatId,chat:initialChat})
+            })
           })
-        }) */
-        helpher.getInitialChat(obj.chatId,function(initialChat){
-          console.log('initialchat',initialChat)
-          socket.emit('chatName',{sender:obj.sender,reciever:obj.reciever,chatId:obj.chatId,chat:initialChat})
-        })
+  
        console.log(obj,"ofbj")
       
-      
       })
+    })
   socket.on('userList',function(name){
       user.find({name:{$ne:obj.sender}},'name',function(err,list){
         if(err) throw err;
@@ -108,18 +114,16 @@ io.on('connection', function(socket){
   })
   
   socket.on('sendReciever',function(recieverName){
-      console.log(recieverName,'recieverName')
       obj.reciever= recieverName;
       console.log(obj.sender,recieverName,'reciverName');
       helpher.members(obj.sender,recieverName,function(senderId,recieverId){
         obj.senderId = senderId;
         obj.recieverId= recieverId;
+        helpher.createChat
         console.log(senderId,recieverId,'check2')
-        helpher.chatId(senderId,recieverId,function(messageId){
-          console.log(messageId,'messageId')
-            obj.chatId =messageId;
+        
         })
-      })
+      
   });
   
   socket.on('disconnect',function(){

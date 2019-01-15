@@ -5,23 +5,26 @@ const {message} = require('./models/message');
 
 const helphers ={};
 helphers.members= function(senderName,recieverName,cb){
+    console.time('members')
     user.findOne({name:senderName},'_id',function(err,sender){
         if(!err){
             user.findOne({name:recieverName},'_id',function(err,reciever){
                 if(!err){
                     console.log(sender,reciever,'senderreciever')
                     cb(sender._id,reciever._id)
+                    console.timeEnd('members')
                 }else{console.log(err)}
             })
         }
     })
 }
-helphers.saveMessage = function(senderId,recieverId,messageString,cb){
+helphers.saveMessage = function(senderId,recieverId,messageString,chatId,cb){
+    
     const newMessage = new message({sender:senderId,reciever:recieverId,message:messageString});
-    newMessage.save().then((newMessage)=>chat.updateOne({members:{$all:[recieverId,senderId]}},{$set:{messages:newMessage._id}},function(err,raw){
+    newMessage.save().then((newMessage)=>chat.updateOne({_id:chatId},{$addToSet:{messages:newMessage._id}},function(err,raw){
         if(err) throw err;
-        console.log(raw)
-        cb(null)
+        console.log(raw,'rawwwwwwwwwww')
+        cb(null,newMessage._id)
     }))
 }
 //required fields message ,chatId,sender,reciever
@@ -71,6 +74,7 @@ helphers.chat=function(senderId,recieverId,messageId){
 
 } */
 helphers.chatId = function(senderId,recieverId,cb){
+    console.time('chatID')
     chat.findOne({members:{$all:[senderId,recieverId]}},function(err,userChat){
         
         if(err) throw err;
@@ -80,6 +84,7 @@ helphers.chatId = function(senderId,recieverId,cb){
     }else{
     const newChat = new chat();
     newChat.members.push(senderId,recieverId);
+    console.log(newChat,'rtrtrtr')
     newChat.save().then(res=>{console.log(res)
     
     cb(res._id)});
@@ -88,12 +93,11 @@ helphers.chatId = function(senderId,recieverId,cb){
     })
 }
 helphers.getInitialChat = function(chatId,cb){
+
     console.log(chatId,'chattid')
-    chat.findById(chatId,{messages:1}).populate('messages','sender message').then((res)=>{
-         const {length}=res.messages.length;
-         console.log(length,'length')
-         cb(res.messages[length-1])
-        console.log(res,'ress')})
+    chat.findById(chatId,{messages:1}).populate({path:'messages' ,select:{sender:1,message:1},populate:{path:'sender',select:{name:1}}}).then((res)=>{
+         cb(res.messages)
+        console.log(res,'ressss')})
 }
 
 module.exports = helphers;
