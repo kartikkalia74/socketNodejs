@@ -44,7 +44,7 @@ export default class User extends Component{
         return(
             <React.Fragment>
             <h1>Messages</h1>
-            <ul className="messageList">{this.state.chat.map((chat,index)=><li key={index}>{chat.sender.name}:{chat.message}</li>)}</ul>
+            <ul className="messageList">{this.state.chat.map((chat,index)=><li className={this.state.sender===chat.sender.name?"card-panel teal lighten-2":"card-panel blue lighten-3"} key={index}>{chat.sender.name}:{chat.message}</li>)}</ul>
             <form >
                     <h1>{this.state.name}</h1>
                 <label htmlFor="message">message</label>
